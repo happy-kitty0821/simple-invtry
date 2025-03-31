@@ -1,0 +1,80 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+    .sidebar {
+        background-color: #1e40af;
+        min-height: 100vh;
+        width: 250px;
+        transition: all 0.3s;
+    }
+
+    .sidebar-brand {
+        padding: 1rem 1.5rem;
+        color: white;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-link {
+        color: white !important;
+        padding: 0.75rem 1.5rem;
+        margin: 0.25rem 1rem;
+        border-radius: 0.5rem;
+        transition: all 0.3s;
+    }
+
+    .nav-link:hover {
+        background-color: #1e3a8a;
+    }
+
+    .nav-link.active {
+        background-color: #1e3a8a;
+        border-left: 4px solid #60a5fa;
+    }
+
+    .btn-logout {
+        width: 100%;
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s;
+    }
+
+    .btn-logout:hover {
+        background-color: #1e3a8a;
+        color: white;
+    }
+</style>
+
+<div class="sidebar">
+    {% with cleaned_path=request.path|slice:"1:-1" %}
+    <div class="sidebar-brand">
+        <h5 class="mb-0">Stockify</h5>
+        <!-- <pre>{{ cleaned_path }}</pre> -->
+    </div>
+    <nav class="nav flex-column py-3">
+        <a class="nav-link {% if cleaned_path == 'home' %}active{% endif %}" href="{% url 'dashboard' %}">
+            <i class="fas fa-home me-2"></i> Dashboard
+        </a>
+        <a class="nav-link {% if cleaned_path == 'inventory' %}active{% endif %}" href="{% url 'inventory' %}">
+            <i class="fas fa-clipboard-list me-2"></i> Inventory
+        </a>
+        <a class="nav-link {% if cleaned_path == 'home/categories' %}active{% endif %}" href="{% url 'category' %}">
+            <i class="fas fa-tags me-2"></i> Categories
+        </a>
+        <a class="nav-link {% if cleaned_path == 'home/suppliers' %}active{% endif %}" href="{% url 'suppliers' %}">
+            <i class="fas fa-users me-2"></i> Suppliers
+        </a>
+        <a class="nav-link {% if cleaned_path == 'settings' %}active{% endif %}" href="#to be implemented">
+            <i class="fas fa-cog me-2"></i> Settings
+        </a>
+        <div class="mt-4 px-3">
+            <a href="{% url 'logout' %}" class="btn btn-logout">
+                <i class="fas fa-sign-out-alt me-2"></i> Logout
+            </a>
+        </div>
+    </nav>
+    {% endwith %}
+</div>
+
+<!-- Bootstrap JS and Popper.js -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>

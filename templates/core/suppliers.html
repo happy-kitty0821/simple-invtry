@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+{% load static %}
+<title>Stockify - {% block title %}Suppliers-Page{% endblock %}</title>
+{% block extra_css %}
+<style>
+    .supplier-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    .supplier-table th, .supplier-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+    .supplier-table th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+    }
+    .supplier-table tr:hover {
+        background-color: #f5f5f5;
+    }
+    .supplier-img {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+    .action-btns {
+        white-space: nowrap;
+    }
+    .action-btns .btn {
+        padding: 5px 10px;
+        margin-right: 5px;
+    }
+    .add-supplier-btn {
+        margin-bottom: 20px;
+    }
+    .modal-img {
+        max-width: 150px;
+        max-height: 150px;
+        border-radius: 50%;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Suppliers Management</h2>
+        <button class="btn btn-primary add-supplier-btn" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
+            <i class="fas fa-plus"></i> Add Supplier
+        </button>
+    </div>
+
+    <!-- Suppliers Table -->
+    <div class="table-responsive">
+        <table class="supplier-table">
+            <thead>
+                <tr>
+                    <th>Photo</th>
+                    <th>Name</th>
+                    <th>Contact Person</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Supplied Items</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for supplier in suppliers %}
+                <tr>
+                    <td>
+                        {% if supplier.photo %}
+                        <img src="{{ supplier.photo.url }}" alt="{{ supplier.name }}" class="supplier-img">
+                        {% else %}
+                        <img src="{% static 'images/default-avatar.png' %}" alt="No image" class="supplier-img">
+                        {% endif %}
+                    </td>
+                    <td>{{ supplier.name }}</td>
+                    <td>{{ supplier.contact_person }}</td>
+                    <td>{{ supplier.phone_number }}</td>
+                    <td>{{ supplier.email }}</td>
+                    <td>{{ supplier.supplied_item }}</td>
+                    <td class="action-btns">
+                        <a href="{% url 'edit-supplier' supplier.id %}" class="btn btn-sm btn-warning">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <form action="{% url 'delete-supplier' supplier.id %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this supplier?')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                        <button class="btn btn-sm btn-info view-btn" data-bs-toggle="modal" data-bs-target="#viewSupplierModal" 
+                                data-name="{{ supplier.name }}"
+                                data-contact="{{ supplier.contact_person }}"
+                                data-phone="{{ supplier.phone_number }}"
+                                data-email="{{ supplier.email }}"
+                                data-items="{{ supplier.supplied_item }}"
+                                data-photo="{% if supplier.photo %}{{ supplier.photo.url }}{% else %}{% static 'images/default-avatar.png' %}{% endif %}">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center">No suppliers found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Add Supplier Modal -->
+    <div class="modal fade" id="addSupplierModal" tabindex="-1" aria-labelledby="addSupplierModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addSupplierModalLabel">Add New Supplier</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post" action="{% url 'suppliers' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="supplierName" class="form-label">Supplier Name</label>
+                            <input type="text" class="form-control" id="supplierName" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="contactPerson" class="form-label">Contact Person</label>
+                            <input type="text" class="form-control" id="contactPerson" name="contact_person" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="phoneNumber" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="phoneNumber" name="phone_number" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="photo" class="form-label">Photo</label>
+                            <input type="file" class="form-control" id="photo" name="photo">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save Supplier</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Supplier Modal -->
+    <div class="modal fade" id="viewSupplierModal" tabindex="-1" aria-labelledby="viewSupplierModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewSupplierModalLabel">Supplier Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="supplierPhotoView" src="" class="modal-img mb-3" alt="Supplier Photo">
+                    <div class="supplier-details text-start">
+                        <p><strong>Name:</strong> <span id="supplierNameView"></span></p>
+                        <p><strong>Contact Person:</strong> <span id="contactPersonView"></span></p>
+                        <p><strong>Phone:</strong> <span id="phoneNumberView"></span></p>
+                        <p><strong>Email:</strong> <span id="emailView"></span></p>
+                        <p><strong>Supplied Items:</strong> <span id="suppliedItemsView"></span></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // View Supplier Modal
+    document.addEventListener('DOMContentLoaded', function() {
+        const viewButtons = document.querySelectorAll('.view-btn');
+        viewButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                document.getElementById('supplierPhotoView').src = this.dataset.photo;
+                document.getElementById('supplierNameView').textContent = this.dataset.name;
+                document.getElementById('contactPersonView').textContent = this.dataset.contact;
+                document.getElementById('phoneNumberView').textContent = this.dataset.phone;
+                document.getElementById('emailView').textContent = this.dataset.email;
+                document.getElementById('suppliedItemsView').textContent = this.dataset.items;
+            });
+        });
+    });
+</script>
+{% endblock %}

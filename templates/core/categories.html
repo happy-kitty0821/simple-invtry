@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% load static %}
+<title>Stockify - {% block title %}Category Management{% endblock %}</title>
+{% block extra_css %}
+<style>
+    .category-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid #dee2e6;
+        border-radius: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+    .category-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+    .category-image-container {
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border-radius: 0.5rem 0.5rem 0 0;
+    }
+    .category-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .category-icon-placeholder {
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f8f9fa;
+    }
+    .category-name {
+        font-size: 1.25rem;
+        font-weight: 500;
+        margin: 1rem 0;
+    }
+    .category-actions {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #dee2e6;
+    }
+    .status-badge {
+        font-size: 0.8rem;
+        padding: 0.35rem 0.75rem;
+    }
+    @media (max-width: 768px) {
+        .category-image-container,
+        .category-icon-placeholder {
+            height: 150px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 p-3">
+        <h4>Categories Management</h4>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+            <i class="fas fa-plus me-2"></i> Add New Category
+        </button>
+    </div>
+
+    <!-- Add Category Modal -->
+    <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCategoryModalLabel">Add New Category</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post" enctype="multipart/form-data" action="{% url 'category' %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="categoryName" class="form-label">Category Name</label>
+                            <input type="text" class="form-control" id="categoryName" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="categoryStatus" class="form-label">Status</label>
+                            <select class="form-select" id="categoryStatus" name="status">
+                                <option value="ACTIVE">Active</option>
+                                <option value="INACTIVE" selected>Inactive</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="categoryImage" class="form-label">Category Image</label>
+                            <input type="file" class="form-control" id="categoryImage" name="category_image">
+                        </div>
+                        <div class="mb-3">
+                            <label for="favIcon" class="form-label">Font Awesome Icon Class</label>
+                            <input type="text" class="form-control" id="favIcon" name="fav_icon" 
+                                   value="fa-solid fa-icons" placeholder="e.g., fa-solid fa-box">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save Category</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="all-categories">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for category in categories %}
+            <div class="col">
+                <div class="category-card p-3 h-100">
+                    <div class="category-image-container">
+                        {% if category.category_image %}
+                        <img src="{{ category.category_image.url }}" alt="{{ category.name }}" class="category-image">
+                        {% else %}
+                        <div class="category-icon-placeholder w-100">
+                            <i class="{{ category.category_fav_icon }} fa-3x text-muted"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="category-name text-center">{{ category.name }}</div>
+                    <div class="category-status text-center mb-3">
+                        <span class="badge status-badge {% if category.status == 'ACTIVE' %}bg-success{% else %}bg-secondary{% endif %}">
+                            {{ category.get_status_display }}
+                        </span>
+                    </div>
+                    <div class="category-actions d-flex justify-content-center gap-2">
+                        <a href="{% url 'edit-category' category.id %}" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <form action="{% url 'delete-category' category.id %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                    onclick="return confirm('Are you sure you want to delete this category?')">
+                                <i class="fas fa-trash"></i> Remove
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <p class="text-muted text-center">No categories found in the database.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize any needed JavaScript here
+});
+</script>
+{% endblock %}

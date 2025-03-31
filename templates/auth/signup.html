@@ -1,0 +1,226 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Inventory - Sign Up</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .video-background video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: translate(-50%, -50%);
+        }
+
+        .video-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.35);
+            z-index: -1;
+        }
+
+        .auth-card {
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(5px);
+            border-radius: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.79);
+            padding: 2.5rem;
+            width: 90%;
+            max-width: 400px;
+            margin: 2rem;
+            z-index: 1;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-title {
+            color: #333;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .auth-subtitle {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            color: #000000;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.8rem 1rem 0.8rem 2.5rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4C6EF5;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 0.8rem;
+            background: #4C6EF5;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 1rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.79);
+        }
+
+        .submit-btn:hover {
+            background: #3B5BDB;
+            border-color: #364FC7;
+            transform: translateY(-2px);
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .auth-link {
+            color: #5C7CFA;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .auth-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="video-background">
+        <video autoplay muted loop>
+            <source src="{% static 'assets/signup.mp4' %}" type="video/mp4">
+        </video>
+    </div>
+
+    <div class="video-overlay"></div>
+
+    <div class="auth-card">
+        {% if messages %}
+    <div class="alert alert-dismissible fade show">
+        {% for message in messages %}
+            <p class="{% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</p>
+        {% endfor %}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+{% endif %}
+
+        <div class="auth-header">
+            <h1 class="auth-title">
+                <i class="fas fa-user-plus -2"></i>
+                Create Your Profile
+            </h1>
+            <p class="auth-subtitle">Create your free account and get started!</p>
+        </div>
+
+        <form id="signupForm" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <div class="input-group">
+                    <i class="fas fa-user input-icon"></i>
+                    <input type="text" class="form-input" name="username" placeholder="John Doe" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <div class="input-group">
+                    <i class="fas fa-envelope input-icon"></i>
+                    <input type="email" class="form-input" name="email" placeholder="johndoe@example.com" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <div class="input-group">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input type="password" class="form-input" name="password" placeholder="********" required>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">Sign Up</button>
+        </form>
+
+        <div class="auth-footer">
+            Already have an account? 
+            <a href="{% url 'login-page' %}" class="auth-link">Sign In</a>
+        </div>
+    </div>
+</body>
+</html>

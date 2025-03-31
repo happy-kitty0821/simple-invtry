@@ -1,0 +1,109 @@
+{% load static %}
+{% load bootstrap5 %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stockify - {% block title %}{% endblock %}</title>
+    {% bootstrap_css %}
+    <style>
+        /* Custom CSS */
+        body {
+            background-color: #f3f4f6;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            background-color: #1e40af;
+            min-height: 100vh;
+            width: 250px;
+            transition: all 0.3s;
+            padding: 20px 0;
+        }
+
+        .sidebar-header {
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 12px 20px;
+            transition: all 0.3s;
+        }
+
+        .nav-link:hover {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 767.98px) {
+            .sidebar {
+                width: 100%;
+                min-height: auto;
+                position: fixed;
+                bottom: 0;
+                z-index: 1000;
+            }
+
+            .main-content {
+                margin-bottom: 60px;
+            }
+
+            body {
+                flex-direction: column;
+            }
+        }
+
+        /* Footer Styles */
+        .footer {
+            background-color: #ffffff;
+            border-top: 1px solid #dee2e6;
+            padding: 1rem 0;
+            margin-top: auto;
+        }
+    </style>
+    {% block extra_css %}
+    {% endblock %}
+</head>
+<body class="d-flex">
+    <!-- Sidebar -->
+     <div class="sidebar">
+        {% include 'includes/sidebar.html' %}
+    </div>
+    <!-- Main Content -->
+    <main class="main-content">
+        {% bootstrap_messages %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start">
+                    <span class="text-muted">&copy; {% now "Y" %} Stockify. All rights reserved.</span>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <a href="#" class="text-decoration-none text-muted me-3">Privacy Policy</a>
+                    <a href="#" class="text-decoration-none text-muted">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    {% bootstrap_javascript %}
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

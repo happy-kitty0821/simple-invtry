@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+
+<title>Stockify - {% block title %}Product History{% endblock %}</title>
+
+{% block extra_css %}
+<style>
+    .history-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .history-table th, .history-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+    .history-table th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+    }
+    .history-table tr:hover {
+        background-color: #f5f5f5;
+    }
+    .product-img {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+    .search-container {
+        margin-bottom: 20px;
+    }
+    .date-column {
+        white-space: nowrap;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Product Purchase History</h2>
+        <div class="search-container">
+            <form method="get" class="form-inline">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="search" 
+                           placeholder="Search products..." value="{{ search_query }}">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Product Name</th>
+                    <th>Category</th>
+                    <th>Supplier</th>
+                    <th>Stock</th>
+                    <th>Price</th>
+                    <th class="date-column">Date Added</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td>
+                        {% if product.product_image %}
+                        <img src="{{ product.product_image.url }}" class="product-img" alt="{{ product.name }}">
+                        {% else %}
+                        <img src="{% static 'images/default-product.png' %}" class="product-img" alt="No image">
+                        {% endif %}
+                    </td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.category.name }}</td>
+                    <td>{{ product.supplier.name }}</td>
+                    <td>{{ product.stock }}</td>
+                    <td>${{ product.price }}</td>
+                    <td class="date-column">{{ product.created_at|date:"M d, Y H:i" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center">No products found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

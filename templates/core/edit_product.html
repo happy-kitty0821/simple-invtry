@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+<title>Stockify - Edit Product</title>
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Edit Product</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Product Name</label>
+                    <input type="text" class="form-control" id="name" name="name" 
+                           value="{{ product.name }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="category" class="form-label">Category</label>
+                    <select class="form-control" id="category" name="category" required>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}" 
+                                {% if category.id == product.category.id %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="stock" class="form-label">Stock</label>
+                    <input type="number" class="form-control" id="stock" name="stock" 
+                           value="{{ product.stock }}" required>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label for="price" class="form-label">Price</label>
+                    <input type="number" step="0.0001" class="form-control" id="price" name="price" 
+                           value="{{ product.price }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="supplier" class="form-label">Supplier</label>
+                    <select class="form-control" id="supplier" name="supplier" required>
+                        {% for supplier in suppliers %}
+                        <option value="{{ supplier.id }}" 
+                                {% if supplier.id == product.supplier.id %}selected{% endif %}>
+                            {{ supplier.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="product_image" class="form-label">Product Image</label>
+                    <input type="file" class="form-control" id="product_image" name="product_image">
+                </div>
+            </div>
+        </div>
+        {% if product.product_image %}
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">Current Image</label>
+                    <div>
+                        <img src="{{ product.product_image.url }}" alt="{{ product.name }}" 
+                             style="max-width: 200px; max-height: 200px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">Update Product</button>
+            <a href="{% url 'inventory' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+<title>Stockify - Edit Supplier</title>
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Edit Supplier</h2>
+    <form method="post" enctype="multipart/form-data" class="mt-4">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Supplier Name</label>
+                    <input type="text" class="form-control" id="name" name="name" value="{{ supplier.name }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="contact_person" class="form-label">Contact Person</label>
+                    <input type="text" class="form-control" id="contact_person" name="contact_person" 
+                           value="{{ supplier.contact_person }}" required>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label for="phone_number" class="form-label">Phone Number</label>
+                    <input type="tel" class="form-control" id="phone_number" name="phone_number" 
+                           value="{{ supplier.phone_number }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" 
+                           value="{{ supplier.email }}" required>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label for="photo" class="form-label">Supplier Photo</label>
+                    <input type="file" class="form-control" id="photo" name="photo">
+                </div>
+            </div>
+            <div class="col-md-6">
+                {% if supplier.photo %}
+                <div class="mb-3">
+                    <label class="form-label">Current Photo</label>
+                    <div>
+                        <img src="{{ supplier.photo.url }}" alt="{{ supplier.name }}" 
+                             style="max-width: 100px; max-height: 100px; border-radius: 50%;">
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">Update Supplier</button>
+            <a href="{% url 'suppliers' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

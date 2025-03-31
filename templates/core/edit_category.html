@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+<title>Stockify - Edit Category</title>
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Edit Category</h2>
+    <form method="post" enctype="multipart/form-data" class="mt-4">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Category Name</label>
+                    <input type="text" class="form-control" id="name" name="name" 
+                           value="{{ category.name }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="status" class="form-label">Status</label>
+                    <select class="form-select" id="status" name="status">
+                        <option value="ACTIVE" {% if category.status == 'ACTIVE' %}selected{% endif %}>Active</option>
+                        <option value="INACTIVE" {% if category.status == 'INACTIVE' %}selected{% endif %}>Inactive</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label for="fav_icon" class="form-label">Font Awesome Icon Class</label>
+                    <input type="text" class="form-control" id="fav_icon" name="fav_icon" 
+                           value="{{ category.category_fav_icon }}">
+                </div>
+                <div class="mb-3">
+                    <label for="category_image" class="form-label">Category Image</label>
+                    <input type="file" class="form-control" id="category_image" name="category_image">
+                </div>
+            </div>
+        </div>
+        {% if category.category_image %}
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">Current Image</label>
+                    <div>
+                        <img src="{{ category.category_image.url }}" alt="{{ category.name }}" 
+                             style="max-width: 200px; max-height: 200px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">Update Category</button>
+            <a href="{% url 'category' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

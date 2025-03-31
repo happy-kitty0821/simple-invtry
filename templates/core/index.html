@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+<title>Stockify - {% block title %}Dashboard{% endblock %}</title>
+{% block extra_css %}
+    <style>
+        .welcome-message {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.79);
+            margin-bottom: 2rem;
+        }
+
+        .welcome-message h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: #000000;
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        }
+
+        .welcome-message p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.79);
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.79);
+        }
+        
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .stat-card .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .stat-card .stat-icon {
+            font-size: 2.5rem;
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+        
+        .quick-actions {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .quick-action-btn {
+            flex: 1;
+            padding: 15px;
+            border-radius: 8px;
+            background: white;
+            border: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.79);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .quick-action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.79);
+            color: #3498db;
+        }
+        
+        .quick-action-btn i {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        
+        body.dark-mode {
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+
+        body.dark-mode .sidebar {
+            background-color: #2d2d2d;
+            color: #ffffff;
+        }
+
+        body.dark-mode .main-content {
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+
+        body.dark-mode .nav-link {
+            color: #ffffff;
+        }
+
+        body.dark-mode .btn-logout {
+            color: #ffffff;
+        }
+        
+        body.dark-mode .stat-card,
+        body.dark-mode .quick-action-btn {
+            background-color: #2d2d2d;
+            color: #ffffff;
+        }
+        
+        body.dark-mode .stat-card .stat-value {
+            color: #ffffff;
+        }
+        
+        body.dark-mode .stat-card .stat-label {
+            color: #bdc3c7;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-1">
+    <div class="welcome-message">
+        <h1>Welcome Back, {{request.user.username}}!</h1>
+        <p>Here's a quick overview of your inventory and recent activities.</p>
+    </div>
+    <div class="quick-actions">
+        <a href="{% url 'inventory' %}" class="quick-action-btn">
+            <i class="fas fa-plus-circle"></i>
+            <span>Add Item</span>
+        </a>
+        <a href="#" class="quick-action-btn">
+            <i class="fas fa-search"></i>
+            <span>Search Items</span>
+        </a>
+        <a href="{% url 'product-history' %}" class="quick-action-btn">
+            <i class="fas fa-truck"></i>
+            <span> Order History</span>
+        </a>
+        <a href="{% url 'category' %}" class="quick-action-btn">
+            <i class="fas fa-tag"></i>
+            <span>Add Category</span>
+        </a>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-boxes"></i>
+                </div>
+                <div class="stat-value"> {{ products_count | default:0 }} </div>
+                <div class="stat-label">Total Items</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-tags"></i>
+                </div>
+                <div class="stat-value">{{ category_count | default:0 }}</div>
+                <div class="stat-label">Categories</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-industry"></i>
+                </div>
+                <div class="stat-value">{{ supplier_count | default:0 }}</div>
+                <div class="stat-label">Suppliers</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="stat-value">{{ low_stock_count|default:0 }}</div>
+                <div class="stat-label">Low Stock Items</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
