@@ -1,4 +1,5 @@
 {% load static %}
+{% load bootstrap5 %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -46,12 +47,7 @@
 </head>
 <body class="auth-bg">
     <div class="display-error-msg">
-        {% if messages %}
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            {% for message in messages %}
-                {{ message }}
-            {% endfor %}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        {% bootstrap_messages %}
         </div>
         {% endif %}
     </div>
