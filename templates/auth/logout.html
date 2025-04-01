@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+{% load static %}
+<title>Stockify - {% block title %}Logout{% endblock %}</title>
+
+{% block extra_css %}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background: #f5f5f5;
+        }
+
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .video-background video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: translate(-50%, -50%);
+        }
+
+        .video-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: -1;
+        }
+
+        .logout-container {
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(5px);
+            border-radius: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.79);
+            padding: 3rem 2.5rem;
+            max-width: 450px;
+            width: 90%;
+            z-index: 1;
+            text-align: center;
+            animation: fadeIn 0.6s ease-in-out;
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            font-size: 2.2rem;
+            font-weight: 600;
+        }
+
+        .redirect-text {
+            color: #4361ee;
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+
+        .confirmation-modal {
+            display: flex;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(69, 67, 67, 0.1);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .confirmation-modal-content {
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(5px);
+            padding: 2.5rem;
+            text-align: center;
+            border-radius: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.79);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .confirmation-modal h2 {
+            margin-bottom: 1.5rem;
+            color: #333;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .confirmation-modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .confirmation-modal-buttons button {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .confirmation-modal-buttons button.confirm {
+            background: #4361ee;
+            color: white;
+        }
+
+        .confirmation-modal-buttons button.confirm:hover {
+            background: #364fc7;
+            transform: translateY(-2px);
+        }
+
+        .confirmation-modal-buttons button.cancel {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .confirmation-modal-buttons button.cancel:hover {
+            background: #d0d0d0;
+            transform: translateY(-2px);
+        }
+    </style>
+{% endblock extra_css %}
+
+{% block content %}
+    <div class="video-background">
+        <video autoplay muted loop>
+            <source src="{% static 'assets/logout.mp4' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <div class="video-overlay"></div>
+
+    <div class="logout-container" id="logoutContainer">
+        <h1>Logging You Out</h1>
+        <p>Please wait while we secure your session...</p>
+        <div class="redirect-text">
+            Redirecting to login in <span id="countdown">3</span> seconds
+        </div>
+    </div>
+
+    <div class="confirmation-modal" id="confirmationModal">
+        <div class="confirmation-modal-content">
+            <h2>Are you sure you want to log out?</h2>
+            <div class="confirmation-modal-buttons">
+                <button class="confirm" onclick="confirmLogout()">Yes, Log Out</button>
+                <button class="cancel" onclick="cancelLogout()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function confirmLogout() {
+            document.getElementById('confirmationModal').style.display = 'none';
+            document.getElementById('logoutContainer').style.display = 'block';
+
+            let seconds = 3;
+            const countdownElement = document.getElementById('countdown');
+
+            const countdown = setInterval(() => {
+                seconds--;
+                countdownElement.textContent = seconds;
+
+                if (seconds <= 0) {
+                    clearInterval(countdown);
+                    fetch("{% url 'logout' %}", {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": getCSRFToken(),
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        }
+                    }).then(response => {
+                        if (response.redirected) {
+                            window.location.href = response.url;
+                        }
+                    }).catch(error => console.error("Error logging out:", error));
+                }
+            }, 1000);
+        }
+
+        function cancelLogout() {
+            document.getElementById('confirmationModal').style.display = 'none';
+            window.history.back();
+        }
+
+        function getCSRFToken() {
+            return document.cookie.split('; ').find(row => row.startsWith('csrftoken='))?.split('=')[1];
+        }
+    </script>
+{% endblock content %}

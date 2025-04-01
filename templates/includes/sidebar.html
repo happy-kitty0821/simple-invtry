@@ -54,16 +54,16 @@
         <a class="nav-link {% if cleaned_path == 'home' %}active{% endif %}" href="{% url 'dashboard' %}">
             <i class="fas fa-home me-2"></i> Dashboard
         </a>
-        <a class="nav-link {% if cleaned_path == 'inventory' %}active{% endif %}" href="{% url 'inventory' %}">
+        <a class="nav-link {% if cleaned_path == 'home/inventory' %}active{% endif %}" href="{% url 'inventory' %}">
             <i class="fas fa-clipboard-list me-2"></i> Inventory
         </a>
-        <a class="nav-link {% if cleaned_path == 'home/categories' %}active{% endif %}" href="{% url 'category' %}">
+        <a class="nav-link {% if cleaned_path == 'home/category' %}active{% endif %}" href="{% url 'category' %}">
             <i class="fas fa-tags me-2"></i> Categories
         </a>
         <a class="nav-link {% if cleaned_path == 'home/suppliers' %}active{% endif %}" href="{% url 'suppliers' %}">
             <i class="fas fa-users me-2"></i> Suppliers
         </a>
-        <a class="nav-link {% if cleaned_path == 'settings' %}active{% endif %}" href="#to be implemented">
+        <a class="nav-link {% if cleaned_path == 'home/settings' %}active{% endif %}" href="{% url 'settings' %}">
             <i class="fas fa-cog me-2"></i> Settings
         </a>
         <div class="mt-4 px-3">

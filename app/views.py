@@ -8,8 +8,11 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.db.models import Q
 from django.utils import timezone
+from django.contrib.auth.decorators import login_required
 
 def landing(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
     if request.method == "POST":
         email = request.POST.get("user-email")
         password = request.POST.get("user-password")
@@ -45,6 +48,7 @@ def register(request):
         return redirect('login-page')
     return render(request , 'auth/signup.html')
 
+@login_required()
 def home(request):
     products_count = Product.objects.count()
     category_count = Category.objects.count()
@@ -62,6 +66,7 @@ def home(request):
     
     return render(request, 'core/index.html', context)
 
+@login_required()
 def view_inventory(request):
     products = Product.objects.all()
     categories = Category.objects.filter(status=Category.CategoryStatus.ACTIVE)
@@ -108,7 +113,7 @@ def view_inventory(request):
         
     return render(request, 'core/inventory.html', context)
 
-
+@login_required()
 def edit_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     categories = Category.objects.all()
@@ -154,6 +159,7 @@ def edit_product(request, product_id):
     }
     return render(request, 'core/edit_product.html', context)
 
+@login_required()
 def delete_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     try:
@@ -165,6 +171,7 @@ def delete_product(request, product_id):
         messages.error(request, f"Error deleting product: {str(e)}")
     return redirect('inventory')
 
+@login_required()
 def product_history(request):
     # Get all products ordered by creation date (newest first)
     products = Product.objects.all().order_by('-created_at')
@@ -182,6 +189,7 @@ def product_history(request):
     }
     return render(request, 'core/product_history.html', context)
 
+@login_required()
 def category(request):
     if request.method == 'POST':
         # Handle form submission for adding new category
@@ -218,6 +226,7 @@ def category(request):
     categories = Category.objects.all().order_by('name')
     return render(request, 'core/categories.html', {'categories': categories})
 
+@login_required()
 def edit_category(request, category_id):
     category = get_object_or_404(Category, id=category_id)
     
@@ -243,18 +252,20 @@ def edit_category(request, category_id):
     
     return render(request, 'core/edit_category.html', {'category': category})
 
+@login_required()
 def delete_category(request, category_id):
     category = get_object_or_404(Category, id=category_id)
     if request.method == 'POST':
         try:
-            if category.category_image:
-                category.category_image.delete()
+            # if category.category_image:
+            #     category.category_image.delete()
             category.delete()
             messages.success(request, "Category deleted successfully!")
         except Exception as e:
             messages.error(request, f"Error deleting category: {str(e)}")
     return redirect('category')
 
+@login_required()
 def suppliers(request):
     if request.method == 'POST':
         try:
@@ -287,6 +298,7 @@ def suppliers(request):
     suppliers = Supplier.objects.all().order_by('name')
     return render(request, 'core/suppliers.html', {'suppliers': suppliers})
 
+@login_required()
 def edit_supplier(request, supplier_id):
     supplier = get_object_or_404(Supplier, id=supplier_id)
     
@@ -319,6 +331,7 @@ def edit_supplier(request, supplier_id):
     # For GET request, show the edit form (you'll need to create this template)
     return render(request, 'core/edit_supplier.html', {'supplier': supplier})
 
+@login_required()
 def delete_supplier(request, supplier_id):
     supplier = get_object_or_404(Supplier, id=supplier_id)
     
@@ -335,5 +348,11 @@ def delete_supplier(request, supplier_id):
 
 
 def logout_view(request):
-    logout(request)
-    return redirect('login')
+    if request.method == "POST":
+        logout(request)
+        return redirect('login-page') 
+    return render(request, 'auth/logout.html')
+
+@login_required()
+def settings_view(request):
+    return render(request, 'core/settings.html')

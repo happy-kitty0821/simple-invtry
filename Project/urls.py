@@ -24,17 +24,18 @@ urlpatterns = [
     path('', views.landing, name="login-page"),
     path('register/', views.register, name="user-registration"),
     path('home/', views.home, name='dashboard'),
-    path('home/inventory', views.view_inventory, name='inventory'),
+    path('home/inventory/', views.view_inventory, name='inventory'),
     path('inventory/<int:product_id>/edit/', views.edit_product, name='edit-product'),
     path('inventory/<int:product_id>/delete/', views.delete_product, name='delete-product'),
     path('products/history/', views.product_history, name='product-history'),
-    path('home/category', views.category , name='category'),
+    path('home/category/', views.category , name='category'),
     path('categories/<int:category_id>/edit/', views.edit_category, name='edit-category'),
     path('categories/<int:category_id>/delete/', views.delete_category, name='delete-category'),
-    path('home/suppliers', views.suppliers, name='suppliers'),
+    path('home/suppliers/', views.suppliers, name='suppliers'),
     path('suppliers/edit/<int:supplier_id>/', views.edit_supplier, name='edit-supplier'),
     path('suppliers/delete/<int:supplier_id>/', views.delete_supplier, name='delete-supplier'),
-    path('logout/', views.logout, name='logout')
+    path('logout/', views.logout_view, name='logout'),
+    path('home/settings/', views.settings_view, name="settings")
 
 ]
 if settings.DEBUG:
